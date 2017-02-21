@@ -29,6 +29,6 @@ public class DisplayHWInfo: MonoBehaviour {
 
 		HWText.text += "\nsystem.accel: "+SystemInfo.supportsAccelerometer;
 		HWText.text += "\naccel: "+Input.acceleration.ToString();
-#endif	
+#endif
 	}
 }
