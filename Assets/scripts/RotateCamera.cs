@@ -19,6 +19,6 @@ public class RotateCamera: MonoBehaviour {
 		transform.rotation = Input.gyro.attitude;
 		transform.Rotate( 0f,   0f, 180f, Space.Self);// to avoid "mirror" effect of our cam
 		transform.Rotate(90f, 180f,   0f, Space.World);// cams are on the back of smartphones
-#endif	
+#endif
 	}
 }

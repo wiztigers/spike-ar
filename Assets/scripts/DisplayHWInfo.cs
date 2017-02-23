@@ -6,6 +6,8 @@ public class DisplayHWInfo: MonoBehaviour {
 	public float Delay = 0.25f;
 	/** Text entity */
 	public UnityEngine.UI.Text HWText;
+	/** So we get access to steps count */
+	public StepsCounter StepsCounter;
 
 	void Start() {
 		Input.gyro.enabled = true;
@@ -29,6 +31,15 @@ public class DisplayHWInfo: MonoBehaviour {
 
 		HWText.text += "\nsystem.accel: "+SystemInfo.supportsAccelerometer;
 		HWText.text += "\naccel: "+Input.acceleration.ToString();
+
+		HWText.text += "\nsteps: "+StepsCounter.Steps;
+
+		HWText.text += "\nsystem.gps: "+(Input.location.status == LocationServiceStatus.Running);
+		HWText.text += "\ngps.latitude: "+Input.location.lastData.latitude;
+		HWText.text += "\ngps.longitude: "+Input.location.lastData.longitude;
+		HWText.text += "\ngps.altitude: "+Input.location.lastData.altitude;
+		HWText.text += "\ngps.horizacc: "+Input.location.lastData.horizontalAccuracy;
+		HWText.text += "\ngps.timestamp: "+Input.location.lastData.timestamp;
 #endif
 	}
 }
