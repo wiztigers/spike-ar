@@ -8,7 +8,9 @@ public class StepsCounter: MonoBehaviour {
 	public float Delay = 0.020f;
 	/** Steps count */
 	public int Steps = 0;
-	
+	/** The sum of standard deviations must be greater than this for movment to be detected */
+	public double MovmentThreshold = 35.0;
+
 	void Start() {
 		if (SystemInfo.supportsAccelerometer)
 			InvokeRepeating("CountSteps", 0.0f, Delay);
@@ -26,429 +28,540 @@ public class StepsCounter: MonoBehaviour {
 			yield return j;
 		}
 	}
+	public static IEnumerable<double> GetPreviousRange(int i, int range, double[] values) {
+		int j = modulo(i-range, values.Length);
+		while (j != i) {
+			j++;
+			if (j == values.Length) j = 0;
+			yield return values[j];
+		}
+	}
+	public static double Average(ICollection<double> values) {
+		double sum = 0;
+		foreach (double v in values) sum += v;
+		return sum / values.Count;
+	}
+	public static double SumStandardDeviations(IEnumerable<double> values, double average) {
+		double result = 0;
+		foreach(double v in values) {
+			result += Mathf.Abs((float)(v - average));
+		}
+		return result;
+	}
+	public static int CountLocalMaxima(IList<double> values, int local, double average) {
+		int count = 0;
+		int range = values.Count;
+		for(int i = local ; i < range-local ; i++) {
+			if ((values[i] > average +2.8) && IsLocalMaximum(values, i, local)) count++;
+		}
+		return count;
+	}
+	public static bool IsLocalMaximum(IList<double> values, int index, int local) {
+		double candidate = values[index];
+		for (int i = index-local ; i < index + local ; i++) {
+			if (values[i] > candidate) return false;
+		}
+		return true;
+	}
 
 
-	private double[] array_total = new double[100];
-    private int i = 3;
-	
-	double accex;
-	double accey;
-	double accez;
-	double accetotal;
+	private bool active = false;
+	private int i = 0;
+	private double[] array_norms = new double[100];
+	private IList<double> values = null;
+	private double average;
+	private double sum_deviations;
 
 	void CountSteps() {
-		
-		accex = Input.acceleration.x;
-		accey = Input.acceleration.y;
-        accez = Input.acceleration.z;		
-		accetotal = System.Math.Sqrt(accex*accex+accey*accey+accez*accez);
+		double ax = Input.acceleration.x * 9.8;
+		double ay = Input.acceleration.y * 9.8;
+		double az = Input.acceleration.z * 9.8;
+		double norm = System.Math.Sqrt(ax*ax + ay*ay + az*az);
 
-		if (i==99) {
-			array_total[i]=accetotal;
-			i=0;
-		}
-		if (i==98) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==97) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==96) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==95) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==94) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==93) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==92) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==91) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==90) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==89) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==88) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==87) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==86) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==85) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==84) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==83) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==82) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==81) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==80) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==79) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==78) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==77) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==76) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==75) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==74) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==73) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==72) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==71) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==70) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==69) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==68) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==67) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==66) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==65) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==64) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==63) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==62) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==61) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==60) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==59) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==58) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==57) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==56) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==55) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==54) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==53) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==52) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==51) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==50) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==49) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==48) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==47) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==46) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==45) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==44) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==43) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==42) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==41) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==40) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==39) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==38) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==37) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==36) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==35) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==34) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==33) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==32) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==31) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==30) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==29) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==28) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==27) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==26) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==25) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==24) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==23) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==22) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==21) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==20) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==19) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==18) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==17) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==16) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==15) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==14) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==13) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==12) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==11) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==10) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==9) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==8) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==7) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==6) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==5) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==4) {
-			array_total[i]=accetotal;
-			i=i+1;
-		}
-		if (i==3) {
-			array_total[i] = accetotal;
-			int j = 99;
-			while(j != i) {
-				Debug.Log("i="+i+" j="+j);
-				if (j==99) {
-					j=0;
-				}
+		if (i == 100) i = 0;
+
+		if (i == 99) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 98) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 97) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 96) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 95) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 94) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 93) {
+			array_norms[i] = norm;
+
+			i++;
+		}
+		if (i == 92) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 91) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 90) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 89) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 88) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 87) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 86) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 85) {
+			array_norms[i] = norm;
+			i++;
+
+			if (sum_deviations >= MovmentThreshold) {
+				// count the number of steps (ie. local maximum) accross 50 values
+				Steps += CountLocalMaxima(values, 10, average);
 			}
-			i=i+1;
 		}
-		if (i==2) {
-			array_total[i]=accetotal;
-			i=i+1;
+		if (i == 84) {
+			array_norms[i] = norm;
+			i++;
+
+			// check if we are curently moving ;
+			// we are if the sum of standard deviations is greater than a threshold
+			average = Average(values);
+			sum_deviations = SumStandardDeviations(values, average);
 		}
-		if (i==1) {
-			array_total[i]=accetotal;
-			i=i+1;
+		if (i == 83) {
+			array_norms[i] = norm;
+			// get (50) last values, from most ancient to now
+			var iterable = GetPreviousRange(i, 50, array_norms);
+			values = new List<double>(iterable);
+			i++;
 		}
-		if (i==0) {
-			array_total[i]=accetotal;
-			i=i+1;
+		if (i == 82) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 81) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 80) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 79) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 78) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 77) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 76) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 75) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 74) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 73) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 72) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 71) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 70) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 69) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 68) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 67) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 66) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 65) {
+			array_norms[i] = norm;
+			i++;
+
+			if (sum_deviations >= MovmentThreshold) {
+				// count the number of steps (ie. local maximum) accross 50 values
+				Steps += CountLocalMaxima(values, 10, average);
+			}
+		}
+		if (i == 64) {
+			array_norms[i] = norm;
+			i++;
+
+			// check if we are curently moving ;
+			// we are if the sum of standard deviations is greater than a threshold
+			average = Average(values);
+			sum_deviations = SumStandardDeviations(values, average);
+		}
+		if (i == 63) {
+			array_norms[i] = norm;
+			// get (50) last values, from most ancient to now
+			var iterable = GetPreviousRange(i, 50, array_norms);
+			values = new List<double>(iterable);
+			i++;
+		}
+		if (i == 62) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 61) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 60) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 59) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 58) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 57) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 56) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 55) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 54) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 53) {
+			array_norms[i] = norm;
+			i++;
+
+			active = true;
+		}
+		if (i == 52) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 51) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 50) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 49) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 48) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 47) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 46) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 45) {
+			array_norms[i] = norm;
+			i++;
+
+			if (active)
+			if (sum_deviations >= MovmentThreshold) {
+				// count the number of steps (ie. local maximum) accross 50 values
+				Steps += CountLocalMaxima(values, 10, average);
+			}
+		}
+		if (i == 44) {
+			array_norms[i] = norm;
+			i++;
+
+			// check if we are curently moving ;
+			// we are if the sum of standard deviations is greater than a threshold
+			if (active) {
+				average = Average(values);
+				sum_deviations = SumStandardDeviations(values, average);
+			}
+		}
+		if (i == 43) {
+			array_norms[i] = norm;
+			// get (50) last values, from most ancient to now
+			if (active) {
+				var iterable = GetPreviousRange(i, 50, array_norms);
+				values = new List<double>(iterable);
+			}
+			i++;
+		}
+		if (i == 42) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 41) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 40) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 39) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 38) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 37) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 36) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 35) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 34) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 33) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 32) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 31) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 30) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 29) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 28) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 27) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 26) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 25) {
+			array_norms[i] = norm;
+			i++;
+
+			if (active)
+			if (sum_deviations >= MovmentThreshold) {
+				// count the number of steps (ie. local maximum) accross 50 values
+				Steps += CountLocalMaxima(values, 10, average);
+			}
+		}
+		if (i == 24) {
+			array_norms[i] = norm;
+			i++;
+
+			// check if we are curently moving ;
+			// we are if the sum of standard deviations is greater than a threshold
+			if (active) {
+				average = Average(values);
+				sum_deviations = SumStandardDeviations(values, average);
+			}
+		}
+		if (i == 23) {
+			array_norms[i] = norm;
+			// get (50) last values, from most ancient to now
+			if (active) {
+				var iterable = GetPreviousRange(i, 50, array_norms);
+				values = new List<double>(iterable);
+			}
+			i++;
+		}
+		if (i == 22) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 21) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 20) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 19) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 18) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 17) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 16) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 15) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 14) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 13) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 12) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 11) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 10) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 9) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 8) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 7) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 6) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 5) {
+			array_norms[i] = norm;
+			i++;
+
+			if (active)
+			if (sum_deviations >= MovmentThreshold) {
+				// count the number of steps (ie. local maximum) accross 50 values
+				Steps += CountLocalMaxima(values, 10, average);
+			}
+		}
+		if (i == 4) {
+			array_norms[i] = norm;
+			i++;
+
+			// check if we are curently moving ;
+			// we are if the sum of standard deviations is greater than a threshold
+			if (active) {
+				average = Average(values);
+				sum_deviations = SumStandardDeviations(values, average);
+			}
+		}
+		if (i == 3) {
+			array_norms[i] = norm;
+			// get (50) last values, from most ancient to now
+			if (active) {
+				var iterable = GetPreviousRange(i, 50, array_norms);
+				values = new List<double>(iterable);
+			}
+			i++;
+		}
+		if (i == 2) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 1) {
+			array_norms[i] = norm;
+			i++;
+		}
+		if (i == 0) {
+			array_norms[i] = norm;
+			i++;
 		}
 	}
 
