@@ -69,4 +69,42 @@ public class StepCounterTest {
 		Assert.AreEqual( array[ 2], range[49]);
 	}
 
+	[Test]
+	public void ParseDouble() {
+		Assert.AreEqual( 0.5201402902603149, Paths.ParseDouble( "0.5201402902603149"));
+		Assert.AreEqual(-0.2651578485965729, Paths.ParseDouble("-0.2651578485965729"));
+	}
+
+	private string TestDataFolder { get { return Paths.GetProjectPath("Assets","scripts","Editor","test_data"); } }
+
+	[Test]
+	public void ReadAcceXFiles() {
+		var data = Paths.ReadStepFile(Paths.Combine(TestDataFolder,"accex4.txt"));
+		Assert.AreEqual(1002, data.Count);
+	}
+	[Test]
+	public void ReadAcceYFiles() {
+		var data = Paths.ReadStepFile(Paths.Combine(TestDataFolder,"accey4.txt"));
+		Assert.AreEqual(1002, data.Count);
+	}
+	[Test]
+	public void ReadAcceZFiles() {
+		var data = Paths.ReadStepFile(Paths.Combine(TestDataFolder,"accez4.txt"));
+		Assert.AreEqual(1002, data.Count);
+	}
+
+	[Test]
+	public void ReadStepData() {
+		var data = Paths.GetStepData(TestDataFolder, 4);
+		Assert.AreEqual(1002, data.Count);
+		// notice the precision loss : our data is 3 doubles, but Vector3 is 3 floats
+		Assert.AreEqual( 1.666364430f, data[0].x); Assert.AreEqual(1.688510780f, data[0].y); Assert.AreEqual(11.69507690f, data[0].z);
+		Assert.AreEqual( 2.324171300f, data[1].x); Assert.AreEqual(1.842936750f, data[1].y); Assert.AreEqual(12.56477070f, data[1].z);
+		Assert.AreEqual(-0.265157849f,data[25].x); Assert.AreEqual(2.272696020f,data[25].y); Assert.AreEqual( 6.01662874f,data[25].z);
+//		var str = new System.Text.StringBuilder();
+//		foreach(var d in data)
+//			str.Append("("+d.x.ToString("0.000000000")+","+d.y.ToString("0.000000000")+","+d.z.ToString("0.000000000")+"), ");
+//		if (data.Count > 0) str.Length -= 2;
+//		Debug.Log("read: "+str.ToString());
+	}
 }
