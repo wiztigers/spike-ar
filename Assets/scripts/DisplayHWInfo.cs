@@ -35,6 +35,7 @@ public class DisplayHWInfo: MonoBehaviour {
 		HWText.text += "\nsteps: "+GameObject.Find("Scripts").GetComponent<StepsCounter>().Steps;
 
 		HWText.text += "\nsystem.gps: "+(Input.location.status == LocationServiceStatus.Running);
+		HWText.text += "\nuser.gps: "+(Input.location.isEnabledByUser);
 		HWText.text += "\ngps.latitude: "+Input.location.lastData.latitude;
 		HWText.text += "\ngps.longitude: "+Input.location.lastData.longitude;
 		HWText.text += "\ngps.altitude: "+Input.location.lastData.altitude;
