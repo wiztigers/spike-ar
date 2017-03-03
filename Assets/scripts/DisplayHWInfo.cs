@@ -32,7 +32,7 @@ public class DisplayHWInfo: MonoBehaviour {
 		HWText.text += "\nsystem.accel: "+SystemInfo.supportsAccelerometer;
 		HWText.text += "\naccel: "+Input.acceleration.ToString();
 
-		HWText.text += "\nsteps: "+GameObject.Find("Scripts").GetComponent<StepsCounter>().Steps;
+		HWText.text += "\nsteps: "+GameObject.Find("Scripts").GetComponent<CountSteps>().Steps;
 
 		HWText.text += "\nsystem.gps: "+(Input.location.status == LocationServiceStatus.Running);
 		HWText.text += "\nuser.gps: "+(Input.location.isEnabledByUser);

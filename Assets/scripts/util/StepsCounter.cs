@@ -7,10 +7,13 @@ public class StepsCounter {
 	/** Steps count */
 	public int Steps { get; private set; }
 	/** The sum of standard deviations must be greater than this for movment to be detected */
-	public double MovmentThreshold = 35.0;
+	public double MovmentThreshold;
+	/** A local maximum must be greater than the average plus this for it to be detected as a step. */
+	public double StepThreshold;
 
-	public StepsCounter(double MovmentThreshold) {
+	public StepsCounter(double MovmentThreshold = 35.0, double StepThreshold = 2.8) {
 		this.MovmentThreshold = MovmentThreshold;
+		this.StepThreshold = StepThreshold;
 		this.Steps = 0;
 	}
 
