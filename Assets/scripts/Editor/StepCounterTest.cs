@@ -101,10 +101,8 @@ public class StepCounterTest {
 		Assert.AreEqual( 1.666364430f, data[0].x); Assert.AreEqual(1.688510780f, data[0].y); Assert.AreEqual(11.69507690f, data[0].z);
 		Assert.AreEqual( 2.324171300f, data[1].x); Assert.AreEqual(1.842936750f, data[1].y); Assert.AreEqual(12.56477070f, data[1].z);
 		Assert.AreEqual(-0.265157849f,data[25].x); Assert.AreEqual(2.272696020f,data[25].y); Assert.AreEqual( 6.01662874f,data[25].z);
-//		var str = new System.Text.StringBuilder();
-//		foreach(var d in data)
-//			str.Append("("+d.x.ToString("0.000000000")+","+d.y.ToString("0.000000000")+","+d.z.ToString("0.000000000")+"), ");
-//		if (data.Count > 0) str.Length -= 2;
-//		Debug.Log("read: "+str.ToString());
+		var counter = new StepsCounter();
+		foreach(var acceleration in data) counter.UpdateSteps(acceleration);
+		Assert.AreEqual(38, counter.Steps);
 	}
 }

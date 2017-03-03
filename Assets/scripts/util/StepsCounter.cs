@@ -7,11 +7,11 @@ public class StepsCounter {
 	/** Steps count */
 	public int Steps { get; private set; }
 	/** The sum of standard deviations must be greater than this for movment to be detected */
-	public double MovmentThreshold;
+	public double MovmentThreshold { get; private set; }
 	/** A local maximum must be greater than the average plus this for it to be detected as a step. */
-	public double StepThreshold;
+	public double StepThreshold { get; private set; }
 
-	public StepsCounter(double MovmentThreshold = 35.0, double StepThreshold = 2.8) {
+	public StepsCounter(double MovmentThreshold = 25.0, double StepThreshold = 1.5) {
 		this.MovmentThreshold = MovmentThreshold;
 		this.StepThreshold = StepThreshold;
 		this.Steps = 0;
@@ -52,11 +52,16 @@ public class StepsCounter {
 		}
 		return result;
 	}
-	public static int CountLocalMaxima(IList<double> values, int local, double average) {
+	public int CountLocalMaxima(IList<double> values, int local, double average) {
 		int count = 0;
 		int range = values.Count;
 		for(int i = local ; i < range-local ; i++) {
-			if ((values[i] > average +2.8) && IsLocalMaximum(values, i, local)) count++;
+			if ((values[i] > average +StepThreshold) && IsLocalMaximum(values, i, local)) {
+				if (!lasts.Contains(values[i])) {
+					count++;
+					lasts.Enqueue(values[i]);
+				}
+			}
 		}
 		return count;
 	}
@@ -68,13 +73,14 @@ public class StepsCounter {
 		return true;
 	}
 
-
 	private bool active = false;
 	private int i = 0;
 	private double[] array_norms = new double[100];
 	private IList<double> values = null;
 	private double average;
 	private double sum_deviations;
+	/** Last detected steps (so we don't detect the same step twice). */
+	private FixedSizeQueue<double> lasts = new FixedSizeQueue<double>(3);
 
 	public void UpdateSteps(Vector3 acceleration) {
 		double norm = GetNorm(acceleration);
