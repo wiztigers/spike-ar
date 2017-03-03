@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StepsCounter: MonoBehaviour {
+public class StepsCounter {
 
-	/** Update time (in seconds) */
-	public float Delay = 0.020f;
 	/** Steps count */
-	public int Steps = 0;
+	public int Steps { get; private set; }
 	/** The sum of standard deviations must be greater than this for movment to be detected */
 	public double MovmentThreshold = 35.0;
 
-	void Start() {
-		if (SystemInfo.supportsAccelerometer)
-			InvokeRepeating("CountSteps", 0.0f, Delay);
+	public StepsCounter(double MovmentThreshold) {
+		this.MovmentThreshold = MovmentThreshold;
+		this.Steps = 0;
 	}
 
+	private static double GetNorm(Vector3 v) {
+		return System.Math.Sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+	}
 	private static int modulo(int x, int m) {
 		int r = x % m;
 		return r < 0 ? r + m : r;
@@ -72,11 +73,8 @@ public class StepsCounter: MonoBehaviour {
 	private double average;
 	private double sum_deviations;
 
-	void CountSteps() {
-		double ax = Input.acceleration.x * 9.8;
-		double ay = Input.acceleration.y * 9.8;
-		double az = Input.acceleration.z * 9.8;
-		double norm = System.Math.Sqrt(ax*ax + ay*ay + az*az);
+	public void UpdateSteps(Vector3 acceleration) {
+		double norm = GetNorm(acceleration);
 
 		if (i == 100) i = 0;
 
