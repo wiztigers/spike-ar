@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
 
@@ -31,7 +33,6 @@ public class StepCounterTest {
 		var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 		var iterable_range = StepsCounter.GetPreviousRange(2, 5, 100);
 		stopwatch.Stop();
-		Debug.Log("indexes: Elapsed="+stopwatch.Elapsed+" Frequency="+System.Diagnostics.Stopwatch.Frequency);
 		var range = new System.Collections.Generic.List<int>(iterable_range);
 		Assert.AreEqual(98, range[0]);
 		Assert.AreEqual(99, range[1]);
@@ -57,7 +58,6 @@ public class StepCounterTest {
 		var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 		var iterable_range = StepsCounter.GetPreviousRange(2, 50, array);
 		stopwatch.Stop();
-		Debug.Log("values:  Elapsed="+stopwatch.Elapsed+" Frequency="+System.Diagnostics.Stopwatch.Frequency);
 		var range = new System.Collections.Generic.List<double>(iterable_range);
 		Assert.AreEqual( array[53], range[ 0]);
 		Assert.AreEqual( array[54], range[ 1]);
@@ -79,23 +79,24 @@ public class StepCounterTest {
 
 	[Test]
 	public void ReadAcceXFiles() {
-		var data = Paths.ReadStepFile(Paths.Combine(TestDataFolder,"accex4.txt"));
+		var data = Paths.ReadStepFile(Paths.Combine(TestDataFolder,"jesus_legacy_38","accex4.txt"));
 		Assert.AreEqual(1002, data.Count);
 	}
 	[Test]
 	public void ReadAcceYFiles() {
-		var data = Paths.ReadStepFile(Paths.Combine(TestDataFolder,"accey4.txt"));
+		var data = Paths.ReadStepFile(Paths.Combine(TestDataFolder,"jesus_legacy_38","accey4.txt"));
 		Assert.AreEqual(1002, data.Count);
 	}
 	[Test]
 	public void ReadAcceZFiles() {
-		var data = Paths.ReadStepFile(Paths.Combine(TestDataFolder,"accez4.txt"));
+		var data = Paths.ReadStepFile(Paths.Combine(TestDataFolder,"jesus_legacy_38","accez4.txt"));
 		Assert.AreEqual(1002, data.Count);
 	}
 
 	[Test]
 	public void ReadStepData() {
-		var data = Paths.GetStepData(TestDataFolder, 4);
+		string folder = Paths.GetProjectPath("Assets","scripts","Editor","test_data","jesus_legacy_38");
+		var data = Paths.GetStepData(folder, 4);
 		Assert.AreEqual(1002, data.Count);
 		// notice the precision loss : our data is 3 doubles, but Vector3 is 3 floats
 		Assert.AreEqual( 1.666364430f, data[0].x); Assert.AreEqual(1.688510780f, data[0].y); Assert.AreEqual(11.69507690f, data[0].z);
@@ -104,5 +105,38 @@ public class StepCounterTest {
 		var counter = new StepsCounter();
 		foreach(var acceleration in data) counter.UpdateSteps(acceleration);
 		Assert.AreEqual(38, counter.Steps);
+	}
+
+	[Test]
+	public void ReadJesus80Data() {
+		string folder = Paths.GetProjectPath("Assets","scripts","Editor","test_data","jesus_main_vertical_80+1");
+		var data = Paths.GetStepData(folder, 0);
+		data.AddRange(Paths.GetStepData(folder, 1));
+		data.AddRange(Paths.GetStepData(folder, 2));
+		var counter = new StepsCounter();
+		foreach(var acceleration in data) counter.UpdateSteps(acceleration);
+		Assert.AreEqual(82, counter.Steps);
+	}
+
+	[Test]
+	public void ReadRegis75Data() {
+		string folder = Paths.GetProjectPath("Assets","scripts","Editor","test_data","regis_main_vertical_75+1");
+		var data = Paths.GetStepData(folder, 0);
+		data.AddRange(Paths.GetStepData(folder, 1));
+		data.AddRange(Paths.GetStepData(folder, 2));
+		var counter = new StepsCounter();
+		foreach(var acceleration in data) counter.UpdateSteps(acceleration);
+		Assert.AreEqual(77, counter.Steps);
+	}
+
+	[Test]
+	public void ReadEric92Data() {
+		string folder = Paths.GetProjectPath("Assets","scripts","Editor","test_data","eric_main_vertical_92");
+		var data = Paths.GetStepData(folder, 0);
+		data.AddRange(Paths.GetStepData(folder, 1));
+		data.AddRange(Paths.GetStepData(folder, 2));
+		var counter = new StepsCounter(15.0, 0.6);
+		foreach(var acceleration in data) counter.UpdateSteps(acceleration);
+		Assert.AreEqual(92, counter.Steps);
 	}
 }
