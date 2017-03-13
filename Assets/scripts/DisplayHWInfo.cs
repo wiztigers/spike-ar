@@ -18,6 +18,8 @@ public class DisplayHWInfo: MonoBehaviour {
 	void DisplaySystemInfo() {
 		HWText.text = "";
 		HWText.text += "refresh: "+Delay*1000+"ms";
+		HWText.text += "\nposition: "+GameObject.Find("Camera").transform.position;
+		HWText.text += "\nrotation: "+GameObject.Find("Camera").transform.rotation;
 
 #if UNITY_STANDALONE || UNITY_EDITOR
 		HWText.text += "\nmouse: "+Input.GetAxis("Mouse X")+" ; "+Input.GetAxis("Mouse Y");
