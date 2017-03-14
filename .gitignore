@@ -395,4 +395,12 @@ tags
 
 # End of https://www.gitignore.io/api/windows,unity,csharp,c++,monodevelop,vim,cuda
 
-README*.meta
+### PROJECT-SPECIFICS ###
+# ignore .meta files for unit test data files
+**/test_data/**/*.meta
+# ignore directories .meta files
+Assets/scenes.meta
+Assets/scripts.meta
+Assets/scripts/Editor.meta
+Assets/scripts/Editor/test_data.meta
+Assets/scripts/util.meta
