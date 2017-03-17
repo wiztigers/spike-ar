@@ -7,3 +7,5 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/scenes/ra-spike.unity
+  - enabled: 1
+    path: Assets/scenes/AT/first_floor.unity

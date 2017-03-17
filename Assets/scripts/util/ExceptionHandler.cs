@@ -3,7 +3,9 @@
 public class ExceptionHandler: MonoBehaviour {
 
 	void Awake() {
-		Application.RegisterLogCallback(OnException);
+		Application.logMessageReceived += OnException;
+		//if Unity version < 5.0, use the following:
+		//Application.RegisterLogCallback(OnException);
 	}
 	private void OnException(string condition, string stack, LogType type) {
 		if (type != LogType.Exception) return;

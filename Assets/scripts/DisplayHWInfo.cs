@@ -6,8 +6,6 @@ public class DisplayHWInfo: MonoBehaviour {
 	public float Delay = 0.25f;
 	/** Text entity */
 	public UnityEngine.UI.Text HWText;
-	/** So we get access to steps count */
-	public StepsCounter StepsCounter;
 
 	void Start() {
 		Input.gyro.enabled = true;
