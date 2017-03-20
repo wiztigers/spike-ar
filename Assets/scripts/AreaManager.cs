@@ -2,48 +2,74 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class AreaManager: MonoBehaviour {
+public class AreaManager: MonoBehaviour, StepListener {
 
-	private Dictionary<string,GameObject> scenes;
+	private Dictionary<string,GameObject> objects;
+	private Dictionary<string,Scene> scenes;
 	private Dictionary<string,bool> isLoaded;
 
+	private StepWatcher watcher;
+
 	void Start() {
-		scenes   = new Dictionary<string,GameObject>();
+		objects  = new Dictionary<string,GameObject>();
+		scenes   = new Dictionary<string,Scene>();
 		isLoaded = new Dictionary<string,bool>();
 		var names = new string[] { "Exterior", "Floor0", "Floor1", };
 		foreach(var name in names) {
-			scenes[name] = null;
+			objects[name]  = null;
 			isLoaded[name] = false;
 		}
-		InvokeRepeating("UpdateActiveScenes", 0.0f, 0.5f);
+		watcher = GameObject.Find("Scripts").GetComponent<StepWatcher>();
+		watcher.Register(this);
+	}
+	void OnApplicationQuit() {
+		watcher.Unregister(this);
+		watcher = null;
 	}
 
-	void UpdateActiveScenes() {
-		int steps = GameObject.Find("Scripts").GetComponent<CountSteps>().Steps;
-		Logger.Debug("Steps: "+steps+" ; #scenes:"+SceneManager.sceneCount);
-		string name = "Floor1";
-		if (!isLoaded[name] && (steps%10 > 0 && steps%10 <=5)) {
-			SceneManager.LoadScene(name, LoadSceneMode.Additive);
-			//if Unity version < 5.3, use the following:
-			//Application.LoadLevelAdditive("Floor1");
-
-			var scene2go = new GameObject(name);
-			scenes[name] = scene2go;
-			var scene = SceneManager.GetSceneByName(name);
-			foreach(GameObject go in scene.GetRootGameObjects())
-				go.transform.parent = scene2go.transform;
-			scene2go.transform.parent = transform;
-			Logger.Debug("Scene loaded.");
-			isLoaded[name] = true;
-			
-		} else
-		if ( isLoaded[name] && (steps%10 ==0 || steps%10 > 5)) {
-			scenes[name].transform.parent = null;
-			Destroy(scenes[name]);
-			scenes[name] = null;
-			isLoaded[name] = false;
-			Logger.Debug("Scene unloaded.");
-		}
+	public void OnStep(int steps) {
+		string area = "Floor1";
+		if (steps%10 > 0 && steps%10 <=5) Load(area);
+		else
+		if (steps%10 ==0 || steps%10 > 5) Unload(area);
 	}
 
+	/** Adds a new area to rendering.
+	 *  @param uid Area unique identifier
+	 */
+	private bool Load(string uid) {
+		if (isLoaded[uid]) return true; // nothing to do
+
+		isLoaded[uid] = true;
+		Logger.Debug("Load scene: \"{0}\".", uid);
+		SceneManager.LoadScene(uid, LoadSceneMode.Additive);
+		//if Unity version < 5.3, use the following:
+		//Application.LoadLevelAdditive("Floor1");
+
+		var scene2go = new GameObject(uid);
+		objects[uid] = scene2go;
+		var scene = SceneManager.GetSceneByName(uid);
+		scenes[uid] = scene;
+		foreach(GameObject go in scene.GetRootGameObjects())
+			go.transform.parent = scene2go.transform;
+		scene2go.transform.parent = transform;
+
+		return true;
+	}
+	/** Stops rendering of a specific area.
+	 *  @param uid Area unique identifier
+	 */
+	private bool Unload(string uid) {
+		if (!isLoaded[uid]) return true; // nothing to do
+
+		isLoaded[uid] = false;
+		objects[uid].transform.parent = null;
+		Destroy(objects[uid]);
+		objects[uid] = null;
+		SceneManager.UnloadSceneAsync(scenes[uid]);
+		scenes.Remove(uid);
+		Logger.Debug("Scene \"{0}\" unloaded.", uid);
+
+		return true;
+	}
 }

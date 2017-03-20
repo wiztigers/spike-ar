@@ -24,7 +24,7 @@ public class Logger: MonoBehaviour {
 #endif
 		Logger.Debug("Application opened.");
 	}
-	void OnDestroy() {
+	void OnApplicationQuit() {
 		Logger.Debug("Application closed.");
 #if !FINAL
 		if (writer != null) {
