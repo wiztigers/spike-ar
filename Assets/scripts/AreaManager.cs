@@ -23,15 +23,16 @@ public class AreaManager: MonoBehaviour, StepListener {
 		watcher.Register(this);
 	}
 	void OnApplicationQuit() {
-		watcher.Unregister(this);
+		if (watcher != null)
+			watcher.Unregister(this);
 		watcher = null;
 	}
 
 	public void OnStep(int steps) {
 		string area = "Floor1";
-		if (steps%10 > 0 && steps%10 <=5) Load(area);
+		if (steps >= 0 && steps < 50) Load(area);
 		else
-		if (steps%10 ==0 || steps%10 > 5) Unload(area);
+		if (steps >= 50) Unload(area);
 	}
 
 	/** Adds a new area to rendering.

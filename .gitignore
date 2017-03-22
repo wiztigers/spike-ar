@@ -401,6 +401,7 @@ tags
 # ignore directories .meta files
 Assets/scenes.meta
 Assets/scenes/AT.meta
+Assets/materials.meta
 Assets/scripts.meta
 Assets/scripts/Editor.meta
 Assets/scripts/Editor/test_data.meta
