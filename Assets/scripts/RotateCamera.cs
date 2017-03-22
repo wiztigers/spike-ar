@@ -2,18 +2,15 @@
 
 public class RotateCamera: MonoBehaviour {
 
-	public float XRotationSpeed = 10.0f;
-	public float YRotationSpeed = 10.0f;
-	public float ZRotationSpeed = 10.0f;
-
 	void Update () {
 #if UNITY_STANDALONE || UNITY_EDITOR
+		float rotationSpeed = 50.0f;
 		float ox =  Input.GetAxis("Mouse Y");// vertical
 		float oy = -Input.GetAxis("Mouse X");// horizontal
 		float oz = 0.0f;
-		ox = ox * Time.deltaTime * XRotationSpeed;
-		oy = oy * Time.deltaTime * YRotationSpeed;
-		oz = oz * Time.deltaTime * ZRotationSpeed;
+		ox = ox * Time.deltaTime * rotationSpeed;
+		oy = oy * Time.deltaTime * rotationSpeed;
+		oz = oz * Time.deltaTime * rotationSpeed;
 		transform.Rotate(ox, oy, oz);
 #else
 		transform.rotation = Input.gyro.attitude;
