@@ -23,7 +23,9 @@ public class DisplayHWInfo: MonoBehaviour {
 		HWText.text += "\nmouse: "+Input.GetAxis("Mouse X")+" ; "+Input.GetAxis("Mouse Y");
 #else
 		HWText.text += "\ncompass.enabled: "+Input.compass.enabled;
-		HWText.text += "\ncompass.magnetic: "+Input.compass.magneticHeading;
+		HWText.text += "\ncompass.accuracy: "+Input.compass.headingAccuracy;
+		HWText.text += "\ncompass.north: "+Input.compass.trueHeading;
+		HWText.text += "\ncompass.timestamp: "+Input.compass.timestamp;
 
 		HWText.text += "\nsystem.gyro: " + SystemInfo.supportsGyroscope;
 		HWText.text += "\ngyro.enabled: "+Input.gyro.enabled;

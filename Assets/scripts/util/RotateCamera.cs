@@ -2,7 +2,11 @@
 
 public class RotateCamera: MonoBehaviour {
 
-	void Update () {
+	void Start() {
+		Input.location.Start();
+	}
+
+	void Update() {
 #if UNITY_STANDALONE || UNITY_EDITOR
 		float rotationSpeed = 50.0f;
 		float ox =  Input.GetAxis("Mouse Y");// vertical
