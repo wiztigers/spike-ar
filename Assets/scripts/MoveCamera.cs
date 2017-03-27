@@ -24,7 +24,7 @@ public class MoveCamera: MonoBehaviour, StepListener {
 	class WalkStrategy {
 		public float speed = 0.70f;
 		public Vector3 GetPosition(Vector3 p, int steps) {
-			return new Vector3(-steps*speed, p.y, p.z);
+			return new Vector3(steps*speed, p.y, p.z);
 		}
 	}
 }
