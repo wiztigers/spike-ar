@@ -30,9 +30,9 @@ public class AreaManager: MonoBehaviour, StepListener {
 
 	public void OnStep(int steps) {
 		string area = "Floor1";
-		if (steps >= 0 && steps < 50) Load(area);
+		if (steps >= 0 && steps < 100) Load(area);
 		else
-		if (steps >= 50) Unload(area);
+		if (steps >= 100) Unload(area);
 	}
 
 	/** Adds a new area to rendering.
